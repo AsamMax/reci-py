@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "reci-py"
+version = "0.1.0"
+description = ""
+authors = ["Maximilian Asam <maximilian.asam1@hs-augsburg.de>"]
+readme = "README.md"
+packages = [{ include = "src" }]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = { extras = ["all"], version = "^0.95.0" }
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.1.0"
+
+[tool.poetry.scripts]
+dev = "src.main:dev"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

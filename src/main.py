@@ -78,4 +78,4 @@ async def get_recipe(recipe_id: int):
 
 
 def dev():
-    uvicorn.run(app, port=8000, reload=True)
+    uvicorn.run("src.main:app", port=8000, reload=True)

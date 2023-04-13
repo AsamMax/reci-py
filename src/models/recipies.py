@@ -7,7 +7,7 @@ from ..database import Base
 class Ingredient(Base):
     __tablename__ = "ingredients"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str | None]
     quantity: Mapped[int]
@@ -20,7 +20,7 @@ class Ingredient(Base):
 class Direction(Base):
     __tablename__ = "directions"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str]
     time: Mapped[int]
 
@@ -31,7 +31,7 @@ class Direction(Base):
 class Recipe(Base):
     __tablename__ = "recipies"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
     # load eagerly

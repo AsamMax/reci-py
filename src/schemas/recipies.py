@@ -1,8 +1,9 @@
+from typing import Sequence
+
 from pydantic import BaseModel
 
 
-class Ingredient(BaseModel):
-    id: int | None = None
+class IngredientCreate(BaseModel):
     name: str
     description: str = ""
     quantity: int
@@ -12,8 +13,14 @@ class Ingredient(BaseModel):
         orm_mode = True
 
 
-class Direction(BaseModel):
-    id: int | None = None
+class Ingredient(IngredientCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class DirectionCreate(BaseModel):
     description: str
     time: int
 
@@ -21,12 +28,27 @@ class Direction(BaseModel):
         orm_mode = True
 
 
-class Recipe(BaseModel):
-    id: int | None = None
+class Direction(DirectionCreate):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class RecipeCreate(BaseModel):
     name: str
     description: str
-    ingredients: list[Ingredient]
-    directions: list[Direction]
+    ingredients: Sequence[IngredientCreate]
+    directions: Sequence[DirectionCreate]
+
+    class Config:
+        orm_mode = True
+
+
+class Recipe(RecipeCreate):
+    id: int
+    ingredients: Sequence[Ingredient]
+    directions: Sequence[Direction]
 
     class Config:
         orm_mode = True

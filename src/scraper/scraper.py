@@ -1,5 +1,7 @@
 from typing import Self
 
+from src.schemas.recipies import RecipeCreate
+
 
 class RecipeScraper:
     def __init__(self, url):
@@ -10,3 +12,6 @@ class RecipeScraper:
 
     async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         pass
+
+    def scrape(self) -> RecipeCreate:
+        raise NotImplementedError()

@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from src.scraper.scraper import RecipeScraper
 
 from ..database import SessionLocal
 from ..models import recipies as models
-from ..schemas.recipies import Recipe
+from ..schemas.recipies import Recipe, RecipeCreate
 
 router = APIRouter()
 
@@ -20,7 +21,7 @@ def get_db():
 
 
 @router.post("/", response_model=Recipe)
-def create_recipe(recipe: Recipe, db: Session = Depends(get_db)) -> models.Recipe:
+def create_recipe(recipe: RecipeCreate, db: Session = Depends(get_db)) -> models.Recipe:
     db_recipe: models.Recipe = models.Recipe(
         name=recipe.name, description=recipe.description
     )
@@ -53,4 +54,7 @@ def get_recipes(db: Session = Depends(get_db)) -> list[models.Recipe]:
 
 @router.get("/{recipe_id}", response_model=Recipe)
 def get_recipe(recipe_id: int, db: Session = Depends(get_db)) -> models.Recipe:
-    return db.query(models.Recipe).filter(models.Recipe.id == recipe_id).one()
+    try:
+        return db.query(models.Recipe).filter(models.Recipe.id == recipe_id).one()
+    except NoResultFound:
+        raise HTTPException(status_code=404, detail="Recipe not found")

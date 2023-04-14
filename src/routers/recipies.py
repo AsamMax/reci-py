@@ -58,3 +58,27 @@ def get_recipe(recipe_id: int, db: Session = Depends(get_db)) -> models.Recipe:
         return db.query(models.Recipe).filter(models.Recipe.id == recipe_id).one()
     except NoResultFound:
         raise HTTPException(status_code=404, detail="Recipe not found")
+
+
+@router.patch("/{recipe_id}", response_model=Recipe)
+def patch_recipe(
+    recipe_id: int, recipe: RecipeCreate, db: Session = Depends(get_db)
+) -> models.Recipe:
+    db_recipe = get_recipe(recipe_id)
+    db_recipe.name = recipe.name
+    db_recipe.description = recipe.description
+    # add deep relationships
+    db_recipe.ingredients = [
+        models.Ingredient(**ingredient.dict()) for ingredient in recipe.ingredients
+    ]
+    db_recipe.directions = [
+        models.Direction(**direction.dict()) for direction in recipe.directions
+    ]
+    db.commit()
+    db.refresh(db_recipe)
+    return db_recipe
+
+
+@router.delete("/{recipe_id}")
+def delete_recipe(recipe_id: int, db: Session = Depends(get_db)) -> None:
+    db.query(models.Recipe).filter(models.Recipe.id == recipe_id).delete()

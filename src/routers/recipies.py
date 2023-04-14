@@ -48,7 +48,12 @@ async def create_recipe_from_url(
 
 
 @router.get("/", response_model=list[Recipe])
-def get_recipes(db: Session = Depends(get_db)) -> list[models.Recipe]:
+def get_recipes(
+    search: str | None = None,
+    tags: list[str] | None = None,
+    db: Session = Depends(get_db),
+) -> list[models.Recipe]:
+    # TODO: implement search / Tags
     return db.query(models.Recipe).all()
 
 

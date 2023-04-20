@@ -42,10 +42,12 @@ def get_password_hash(password):
 
 
 def get_user(db: Session, username: str):
-    user = db.query(User).filter(user_models.User.username == username).first()
+    user = (
+        db.query(user_models.User).filter(user_models.User.username == username).first()
+    )
     if not user:
         return None
-    return UserInDB(**user.dict())
+    return UserInDB(**user.__dict__.copy())
 
 
 def authenticate_user(db: Session, username: str, password: str):

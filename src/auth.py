@@ -1,6 +1,5 @@
 import secrets
 from datetime import datetime, timedelta
-from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
@@ -9,7 +8,7 @@ from passlib.context import CryptContext
 
 from .database import Session, get_db
 from .models import users as user_models
-from .schemas.users import TokenData, User, UserInDB
+from .schemas.users import TokenData, User, UserCreate, UserInDB
 
 SECRET_KEY = None
 try:
@@ -22,6 +21,7 @@ if not SECRET_KEY:
     SECRET_KEY = secrets.token_hex(32)
     with open(".secret", "w") as file:
         file.write(SECRET_KEY)
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
@@ -41,7 +41,10 @@ def get_password_hash(password):
     return pwd_context.hash(password)
 
 
-def get_user(db: Session, username: str):
+def get_user(
+    db: Session,
+    username: str,
+):
     user = (
         db.query(user_models.User).filter(user_models.User.username == username).first()
     )
@@ -50,7 +53,11 @@ def get_user(db: Session, username: str):
     return UserInDB(**user.__dict__.copy())
 
 
-def authenticate_user(db: Session, username: str, password: str):
+def authenticate_user(
+    db: Session,
+    username: str,
+    password: str,
+):
     user = get_user(db, username)
     if not user:
         return False
@@ -59,7 +66,10 @@ def authenticate_user(db: Session, username: str, password: str):
     return user
 
 
-def create_access_token(data: dict, expires_delta: timedelta | None = None):
+def create_access_token(
+    data: dict,
+    expires_delta: timedelta | None = None,
+):
     to_encode = data.copy()
     if expires_delta:
         expire = datetime.utcnow() + expires_delta
@@ -70,8 +80,35 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return encoded_jwt
 
 
+def create_user(
+    db: Session,
+    user: UserCreate,
+):
+    db_user = user_models.User(
+        username=user.username,
+        email=user.email,
+        hashed_password=get_password_hash(user.cleartext_password),
+        disabled=False,
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    return db_user
+
+
+def add_dummy_users_if_empty(db: Session = Depends(get_db)):
+    if not db.query(user_models.User).first():
+        create_user(
+            db,
+            UserCreate(
+                username="foo", email="test@example.de", cleartext_password="bar"
+            ),
+        )
+
+
 async def get_current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
 ):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -92,9 +129,7 @@ async def get_current_user(
     return user
 
 
-async def get_current_active_user(
-    current_user: Annotated[User, Depends(get_current_user)]
-):
+async def get_current_active_user(current_user: User = Depends(get_current_user)):
     if current_user.disabled:
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user

@@ -17,6 +17,10 @@ class User(BaseModel):
     disabled: bool = False
 
 
+class UserCreate(User):
+    cleartext_password: str
+
+
 class UserInDB(User):
     hashed_password: str
 

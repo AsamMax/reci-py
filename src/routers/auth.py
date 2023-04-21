@@ -1,11 +1,11 @@
 from datetime import timedelta
-from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
 from ..auth import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
+    add_dummy_users_if_empty,
     authenticate_user,
     create_access_token,
     get_current_active_user,
@@ -13,7 +13,7 @@ from ..auth import (
 from ..database import Session, get_db
 from ..schemas.users import Token, User
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(add_dummy_users_if_empty)])
 
 
 @router.post("/token", response_model=Token)

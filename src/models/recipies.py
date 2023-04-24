@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -34,6 +36,7 @@ class Recipe(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str]
     description: Mapped[str]
+    last_modified: Mapped[datetime.datetime]
     # load eagerly
     ingredients: Mapped[list[Ingredient]] = relationship(
         back_populates="recipe", lazy="joined"

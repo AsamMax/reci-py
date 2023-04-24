@@ -1,4 +1,8 @@
+from datetime import datetime
+from enum import Enum
+
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
@@ -20,7 +24,8 @@ def create_recipe(
     user: User = Depends(get_current_user),
 ) -> models.Recipe:
     db_recipe: models.Recipe = models.Recipe(
-        name=recipe.name, description=recipe.description
+        **recipe.dict(),
+        last_modified=datetime.now(),
     )
     # add deep relationships
     db_recipe.ingredients = [
@@ -46,15 +51,43 @@ async def create_recipe_from_url(
     return create_recipe(recipe, db)
 
 
+class RecipeOrdering(str, Enum):
+    newest = "newest"
+    oldest = "oldest"
+    random = "random"
+    alphabetical = "alphabetical"
+
+
 @router.get("/", response_model=list[Recipe])
 def get_recipes(
     search: str | None = None,
     tags: str | None = None,
+    order: RecipeOrdering = RecipeOrdering.newest,
+    limit: int | None = None,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> list[models.Recipe]:
-    # TODO: implement search / Tags
-    return db.query(models.Recipe).all()
+    q = db.query(models.Recipe)
+
+    # TODO: filter by user
+
+    # TODO: include more fields in search
+    q.filter(models.Recipe.name.like(f"%{search}%"))
+    # TODO: filter by Tags
+
+    if order == RecipeOrdering.newest:
+        q = q.order_by(models.Recipe.last_modified.desc())
+    elif order == RecipeOrdering.oldest:
+        q = q.order_by(models.Recipe.last_modified.asc())
+    elif order == RecipeOrdering.random:
+        q = q.order_by(func.random())
+    elif order == RecipeOrdering.alphabetical:
+        q = q.order_by(models.Recipe.name.asc())
+
+    if limit:
+        q = q.limit(limit)
+
+    return q.all()
 
 
 @router.get("/{recipe_id}", response_model=Recipe)
@@ -77,8 +110,11 @@ def patch_recipe(
     user: User = Depends(get_current_user),
 ) -> models.Recipe:
     db_recipe = get_recipe(recipe_id)
+
+    db_recipe.last_modified = datetime.now()
     db_recipe.name = recipe.name
     db_recipe.description = recipe.description
+
     # add deep relationships
     db_recipe.ingredients = [
         models.Ingredient(**ingredient.dict()) for ingredient in recipe.ingredients

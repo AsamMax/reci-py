@@ -23,8 +23,9 @@ def create_recipe(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> models.Recipe:
-    db_recipe: models.Recipe = models.Recipe(
-        **recipe.dict(),
+    db_recipe = models.Recipe(
+        name=recipe.name,
+        description=recipe.description,
         last_modified=datetime.now(),
     )
     # add deep relationships

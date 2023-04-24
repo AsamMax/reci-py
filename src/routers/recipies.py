@@ -1,16 +1,14 @@
-from typing import Annotated
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
 from src.scraper.scraper import RecipeScraper
 
-from ..auth import get_current_user
-from ..database import get_db
 from ..models import recipies as models
 from ..schemas.recipies import Recipe, RecipeCreate
 from ..schemas.users import User
+from ..util.auth import get_current_user
+from ..util.database import get_db
 
 router = APIRouter()
 

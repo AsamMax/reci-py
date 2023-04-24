@@ -1,10 +1,9 @@
 import uvicorn
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .database import engine, get_db
-from .models.recipies import Base
 from .routers import auth, recipies
+from .util.database import Base, engine
 
 app = FastAPI()
 
@@ -24,9 +23,6 @@ Base.metadata.create_all(bind=engine)
 # Routers
 app.include_router(recipies.router, prefix="/recipies", tags=["recipies"])
 app.include_router(auth.router, prefix="/auth", tags=["auth"])
-
-
-# TODO: Add login
 
 
 @app.get("/")

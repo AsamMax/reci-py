@@ -5,10 +5,11 @@ from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
+from sqlalchemy.orm import Session
 
-from .database import Session, get_db
-from .models import users as user_models
-from .schemas.users import TokenData, User, UserCreate, UserInDB
+from ..models import users as user_models
+from ..schemas.users import TokenData, UserCreate, UserInDB
+from .database import get_db
 
 SECRET_KEY = None
 try:
@@ -127,9 +128,3 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     return user
-
-
-async def get_current_active_user(current_user: User = Depends(get_current_user)):
-    if current_user.disabled:
-        raise HTTPException(status_code=400, detail="Inactive user")
-    return current_user

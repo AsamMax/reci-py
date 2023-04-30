@@ -17,7 +17,7 @@ from ..util.database import get_db
 router = APIRouter(dependencies=[Depends(add_dummy_users_if_empty)])
 
 
-@router.post("/token", response_model=Token)
+@router.post("/token/", response_model=Token)
 async def login_for_access_token(
     form_data: OAuth2PasswordRequestForm = Depends(),
     db: Session = Depends(get_db),
@@ -36,6 +36,6 @@ async def login_for_access_token(
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me/", response_model=User)
+@router.get("/me/", response_model=User)
 async def read_users_me(current_user: User = Depends(get_current_user)):
     return current_user

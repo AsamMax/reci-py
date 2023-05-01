@@ -30,6 +30,7 @@ def create_recipe(
         mealType=recipe.mealType,
         tags=recipe.tags,
         last_modified=datetime.now(),
+        owner=user.username,
     )
     # add deep relationships
     db_recipe.ingredients = [
@@ -73,7 +74,8 @@ def get_recipes(
 ) -> list[models.Recipe]:
     q = db.query(models.Recipe)
 
-    # TODO: filter by user
+    # filter by user
+    q.filter(models.Recipe.owner == user.username)
 
     # TODO: include more fields in search
     q.filter(models.Recipe.name.like(f"%{search}%"))

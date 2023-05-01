@@ -50,3 +50,4 @@ class Recipe(Base):
     directions: Mapped[list[Direction]] = relationship(
         back_populates="recipe", lazy="joined"
     )
+    owner: Mapped[str] = mapped_column(ForeignKey("users.username"))

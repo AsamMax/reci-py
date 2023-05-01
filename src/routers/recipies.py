@@ -26,6 +26,9 @@ def create_recipe(
     db_recipe = models.Recipe(
         name=recipe.name,
         description=recipe.description,
+        dietType=recipe.dietType,
+        mealType=recipe.mealType,
+        tags=recipe.tags,
         last_modified=datetime.now(),
     )
     # add deep relationships

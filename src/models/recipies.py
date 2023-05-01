@@ -1,7 +1,10 @@
 import datetime
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, PickleType
+from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from src.util.enums import DietType, MealType, RecipeTags
 
 from ..util.database import Base
 
@@ -37,6 +40,9 @@ class Recipe(Base):
     name: Mapped[str]
     description: Mapped[str]
     last_modified: Mapped[datetime.datetime]
+    dietType: Mapped[DietType]
+    mealType: Mapped[MealType]
+    tags: Mapped[list[RecipeTags]] = mapped_column(PickleType())
     # load eagerly
     ingredients: Mapped[list[Ingredient]] = relationship(
         back_populates="recipe", lazy="joined"

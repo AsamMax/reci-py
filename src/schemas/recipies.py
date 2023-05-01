@@ -2,6 +2,8 @@ from typing import Sequence
 
 from pydantic import BaseModel
 
+from src.util.enums import DietType, MealType, RecipeTags
+
 
 class IngredientCreate(BaseModel):
     name: str
@@ -38,6 +40,9 @@ class Direction(DirectionCreate):
 class RecipeCreate(BaseModel):
     name: str
     description: str
+    dietType: DietType
+    mealType: MealType
+    tags: list[RecipeTags]
     ingredients: Sequence[IngredientCreate]
     directions: Sequence[DirectionCreate]
 

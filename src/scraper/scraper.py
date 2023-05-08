@@ -1,6 +1,6 @@
 from typing import Self
 
-from src.schemas.recipies import RecipeCreate
+from ..schemas.recipies import RecipeCreate
 
 
 class RecipeScraper:

@@ -6,11 +6,10 @@ from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
 
-from src.scraper.scraper import RecipeScraper
-
 from ..models import recipies as models
 from ..schemas.recipies import Recipe, RecipeCreate
 from ..schemas.users import User
+from ..scraper.scraper import RecipeScraper
 from ..util.auth import get_current_user
 from ..util.database import get_db
 

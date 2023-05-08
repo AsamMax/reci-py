@@ -4,9 +4,8 @@ from sqlalchemy import ForeignKey, PickleType
 from sqlalchemy.ext.mutable import MutableList
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from src.util.enums import DietType, MealType, RecipeTags
-
 from ..util.database import Base
+from ..util.enums import DietType, MealType, RecipeTags
 
 
 class Ingredient(Base):
@@ -27,7 +26,6 @@ class Direction(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     description: Mapped[str]
-    time: Mapped[int]
 
     recipe: Mapped["Recipe"] = relationship(back_populates="directions")
     recipe_id: Mapped[int] = mapped_column(ForeignKey("recipies.id"))
@@ -45,9 +43,9 @@ class Recipe(Base):
     tags: Mapped[list[RecipeTags]] = mapped_column(PickleType())
     # load eagerly
     ingredients: Mapped[list[Ingredient]] = relationship(
-        back_populates="recipe", lazy="joined"
+        back_populates="recipe", lazy=False
     )
     directions: Mapped[list[Direction]] = relationship(
-        back_populates="recipe", lazy="joined"
+        back_populates="recipe", lazy=False
     )
     owner: Mapped[str] = mapped_column(ForeignKey("users.username"))

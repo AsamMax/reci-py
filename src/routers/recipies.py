@@ -33,10 +33,14 @@ def create_recipe(
     )
     # add deep relationships
     db_recipe.ingredients = [
-        models.Ingredient(**ingredient.dict()) for ingredient in recipe.ingredients
+        models.Ingredient(**ingredient.dict())
+        for ingredient in recipe.ingredients
+        if ingredient.name
     ]
     db_recipe.directions = [
-        models.Direction(**direction.dict()) for direction in recipe.directions
+        models.Direction(**direction.dict())
+        for direction in recipe.directions
+        if direction.description
     ]
     db.add(db_recipe)
     db.commit()
@@ -114,18 +118,29 @@ def patch_recipe(
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> models.Recipe:
-    db_recipe = get_recipe(recipe_id)
+    db_recipe = get_recipe(recipe_id, db, user)
 
+    # delete deep relationships
+    db.query(models.Ingredient).filter(
+        models.Ingredient.recipe_id == recipe_id
+    ).delete()
+    db.query(models.Direction).filter(models.Direction.recipe_id == recipe_id).delete()
+
+    # update shallow relationships
     db_recipe.last_modified = datetime.now()
     db_recipe.name = recipe.name
     db_recipe.description = recipe.description
 
     # add deep relationships
     db_recipe.ingredients = [
-        models.Ingredient(**ingredient.dict()) for ingredient in recipe.ingredients
+        models.Ingredient(**ingredient.dict())
+        for ingredient in recipe.ingredients
+        if ingredient.name
     ]
     db_recipe.directions = [
-        models.Direction(**direction.dict()) for direction in recipe.directions
+        models.Direction(**direction.dict())
+        for direction in recipe.directions
+        if direction.description
     ]
     db.commit()
     db.refresh(db_recipe)

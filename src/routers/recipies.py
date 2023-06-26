@@ -137,6 +137,7 @@ def patch_recipe(
         for ingredient in recipe.ingredients
         if ingredient.name
     ]
+    # TODO: Sorting gets wreckt here
     db_recipe.directions = [
         models.Direction(**direction.dict())
         for direction in recipe.directions

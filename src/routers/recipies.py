@@ -130,6 +130,9 @@ def patch_recipe(
     db_recipe.last_modified = datetime.now()
     db_recipe.name = recipe.name
     db_recipe.description = recipe.description
+    db_recipe.dietType = recipe.dietType
+    db_recipe.mealType = recipe.mealType
+    db_recipe.tags = [tag for tag in recipe.tags]
 
     # add deep relationships
     db_recipe.ingredients = [

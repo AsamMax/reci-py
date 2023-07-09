@@ -78,10 +78,11 @@ def get_recipes(
     q = db.query(models.Recipe)
 
     # filter by user
-    q.filter(models.Recipe.owner == user.username)
+    q = q.filter(models.Recipe.owner == user.username)
 
     # TODO: include more fields in search
-    q.filter(models.Recipe.name.like(f"%{search}%"))
+    if search:
+        q = q.filter(models.Recipe.name.like(f"%{search}%"))
     # TODO: filter by Tags
 
     if order == RecipeOrdering.newest:

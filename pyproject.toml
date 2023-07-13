@@ -10,8 +10,10 @@ packages = [{ include = "src" }]
 python = "^3.11"
 fastapi = { extras = ["all"], version = "^0.95.0" }
 sqlalchemy = "^2.0.9"
-python-jose = {extras = ["cryptography"], version = "^3.3.0"}
-passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-jose = { extras = ["cryptography"], version = "^3.3.0" }
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+aiohttp = "^3.8.4"
+beautifulsoup4 = "^4.12.2"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"

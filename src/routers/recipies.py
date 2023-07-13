@@ -2,6 +2,7 @@ from datetime import datetime
 from enum import Enum
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import HttpUrl
 from sqlalchemy import func
 from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import Session
@@ -50,13 +51,13 @@ def create_recipe(
 
 @router.post("/from_url", response_model=Recipe)
 async def create_recipe_from_url(
-    url: str,
+    url: HttpUrl,
     db: Session = Depends(get_db),
     user: User = Depends(get_current_user),
 ) -> models.Recipe:
     async with RecipeScraper(url) as scraper:
-        recipe = scraper.scrape()
-    return create_recipe(recipe, db)
+        recipe = await scraper.scrape()
+    return create_recipe(recipe, db, user)
 
 
 class RecipeOrdering(str, Enum):

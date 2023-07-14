@@ -17,7 +17,6 @@ try:
         SECRET_KEY = file.read()
 except IOError:
     print("generating new key")
-if not SECRET_KEY:
     # generate 32 hex digits using token hex
     SECRET_KEY = secrets.token_hex(32)
     with open(".secret", "w") as file:

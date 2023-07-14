@@ -9,10 +9,10 @@ from sqlalchemy.orm import Session
 from ..models import recipies as models
 from ..schemas.recipies import Recipe, RecipeCreate
 from ..schemas.users import User
-from ..scraper.scraper import RecipeScraper
 from ..util.auth import get_current_user
 from ..util.database import get_db
 from ..util.enums import RecipeOrdering
+from ..util.scraper import RecipeScraper
 
 router = APIRouter()
 

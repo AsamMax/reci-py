@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import HttpUrl
@@ -13,6 +12,7 @@ from ..schemas.users import User
 from ..scraper.scraper import RecipeScraper
 from ..util.auth import get_current_user
 from ..util.database import get_db
+from ..util.enums import RecipeOrdering
 
 router = APIRouter()
 
@@ -58,13 +58,6 @@ async def create_recipe_from_url(
     async with RecipeScraper(url) as scraper:
         recipe = await scraper.scrape()
     return create_recipe(recipe, db, user)
-
-
-class RecipeOrdering(str, Enum):
-    newest = "newest"
-    oldest = "oldest"
-    random = "random"
-    alphabetical = "alphabetical"
 
 
 @router.get("/", response_model=list[Recipe])

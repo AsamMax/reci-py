@@ -38,3 +38,10 @@ class RecipeTags(StrEnum):
     filling = "filling"
     light = "light"
     heavy = "heavy"
+
+
+class RecipeOrdering(StrEnum):
+    newest = "newest"
+    oldest = "oldest"
+    random = "random"
+    alphabetical = "alphabetical"

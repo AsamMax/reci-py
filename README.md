@@ -17,7 +17,7 @@ $ poetry run dev
 ### install dependencies
 
 ```
-pip install .
+pip install -r requirements.txt
 ```
 ### run development server
 

@@ -81,7 +81,6 @@ def get_recipes(
     # filter by user
     q = q.filter(models.Recipe.owner == user.username)
 
-    # TODO: include more fields in search
     if search:
         q = q.filter(models.Recipe.name.like(f"%{search}%"))
     # TODO: filter by Tags
@@ -142,7 +141,7 @@ def patch_recipe(
         for ingredient in recipe.ingredients
         if ingredient.name
     ]
-    # TODO: Sorting gets wreckt here
+
     db_recipe.directions = [
         models.Direction(**direction.dict())
         for direction in recipe.directions

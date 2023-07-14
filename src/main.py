@@ -8,7 +8,6 @@ from .util.database import Base, engine
 app = FastAPI()
 
 # CORS
-# TODO: Change to only allow requests from frontend
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
